@@ -1,0 +1,56 @@
+Software Alerta de ataques por ARP spoofing / poisoning y posibles sniffer de paquetes
+Autor: Nicolas Ricardo Enciso  Universidad Nacional de Colombia sede Bogotá
+Facultad de Ingeniería   Ingeniería de sistemas y computación
+
+Manual de uso:
+Software previo: El presente programa es hecho en Python versión 2.7+, para uso en sistemas operativos Linux, basados en Debian (Ubuntu, Kali)
+                 haciendo uso de dos librerías externas y un Software de mapeo de redes (NMAP)
+                 Es necesario contar con python pip para poder instalar las librerías necesarias, puede descargarlo
+                 e instalarlo en la siguiente página web: (https://pip.pypa.io/en/stable/installing/).
+                 Para su ejecución es neceario mantener los archivos entrenoAtaque.txt y entrenoNeutral.txt en la misma
+                 ubicación en la que se encuentre el software.
+
+Para poder ejecuctar de manera correcta el software, se necesita contar con una versión de Python 2.7 o superior
+
+Proceda a ejecutar el archivo "executable.py" abriendo la terminal de su equipo, escribiendo: python executable.py , luego
+presione enter. Se instalarán el software de mapeo NMAP, y las librerías matplotlib para la graficación de puntos, numpy
+para cálculos matemáticos.
+
+Uso del software:
+Una vez inicia el programa, se le presenta un menú donde puede seleccionar continuar con la ejecución o salir
+para continuar, escriba "a" o "A" y presione enter, para salir, escriba cualquier otra letra y presione enter.
+
+Se presenta el diálogo donde se muestra continuar con la visualización de las interfaces de red conectadas y en uso.
+
+A continuación, el usuario debe escribir la interfaz con la cuál está conectado por wifi, (wlan0, wlp4s0f0 etc)
+luego, presiona enter. En caso de no encontrarse la dirección IP de la interfaz, se da la opción de que el usuario pueda
+ingresarla de forma manual siguiendo el estándar de IP/prefijo de red PE: 192.168.0.1/24 
+
+Se muestra al usuario la dirección IP con la cuál se hará el análisis. Luego presiona enter para continuar con el inicio de
+escaneo de la red por intrusos en sniffer de paquetes.
+Nota: Para redes muy grandes el proceso puede tomar varios minutos, en redes con más de 100 hosts puede tomar una hora.
+Espere al mensaje de confirmación
+En caso de obtener mensaje: Error en la lectura de detector de sniffers, vuelva a ejecutar el programa, reinice la ejecución 
+del software, debido a que no se han encontrado hosts adicionales en la red, si persiste el mensaje, ignorelo.
+
+Posteriormente se inica el escaneo de la tabla ARP, se hace 13 veces en las cuales se muestra al usuario la correcta ejecución de
+cada uno de los casos. Se presenta al finalizar un mensaje de confirmación de ejecución correcta.
+
+Se muestra al usuario el resultado del análisis, con un mensaje de sugerencia en caso de falsos negativos.
+
+Se muestra al usuario los casos en los que se obtuvo positivo sniffers en la red.
+
+Para el caso donde se tengan ataques por ARP, se muestra al usuario la lista de MACs de los posibles atacantes.
+
+Se finaliza la ejecución, y se muestra al usuario una gráfica en 3 dimensiones, donde se muestra la proximidad del caso
+actual de ejecución (punto en verde), respecto a a los casos de ataque (puntos en rojo) y los casos neutrales (puntos en azul)
+la gráfica ubica a los casos de entrenamiento según la cantidad de casos de sniffer positivos, la cantidad de MACs ubicadas
+como de atacantes, y la cantidad de hosts conectados a la red.
+
+Para mayor información puede consultar el repositorio y demás docuementación 
+en nuestro GitHub (https://github.com/nicolasenciso/Wifi-attack-detector-ARP-spoofing)
+
+
+
+
+
