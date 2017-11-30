@@ -5,10 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import math
+import time
 
 #Autor: Nicolas Ricardo Enciso
 #Solo funcional prototipo en distribuciones de Linux basados en Debian (Ubuntu, Kali, etc)
 def menu():
+    os.system('clear')
     print ("-------------------------------------BIENVENIDO-------------------------------------------------------")
     print("              .--------.")
     print("'            / .------. \'")
@@ -34,12 +36,13 @@ def menu():
     modo = raw_input()
     if modo == 'a' or modo == 'A':
         IP = calculoRedManual(modoManual())
-        tests = detectorSniffers(IP)
+        tests,personas = detectorSniffers(IP)
         MACaddrs = manInTheMiddleDetect()
-        ordenamientoAnalisis(tests,MACaddrs)
+        ordenamientoAnalisis(tests,MACaddrs,personas)
         
     else:
         os.system('exit')
+    return personas
     
 
 def lecturaIP():
@@ -166,8 +169,10 @@ def detectorSniffers(IP):
         print("> Analizado terminado.")
     archivo.close()
     resultados = open('tests.txt')
+    personas = 0
     for line in resultados:
         asegurado = re.match(r"tests",line)
+        personas += 1
         if asegurado == 'None':
             print(" > Error en la lectura de archivos de resultado nmap, inicie de nuevo el programa")
             print(" > Cerrando . . .")
@@ -178,7 +183,7 @@ def detectorSniffers(IP):
         finalLine = aux2[len(aux2)-1].strip().split('"')
         testResultado = finalLine[0]
         tests.append(testResultado)
-    return tests
+    return tests,personas
         
 
 
@@ -202,10 +207,11 @@ def manInTheMiddleDetect():
                         print ("Direccion MAC posible atacante: " + temp2)
                         MAC.append(temp2)
                 devices.append(temp2)
+        #time.sleep(3)
     print(" > Finalizado escaneo de tablas ARP")
     return MAC
                     
-def ordenamientoAnalisis(tests, devices):
+def ordenamientoAnalisis(tests, devices,personas):
     os.system('> salida.txt')
     os.system('> badMACs.txt')
     salida = open('salida.txt','w')
@@ -215,10 +221,11 @@ def ordenamientoAnalisis(tests, devices):
         for j in unos:
             if j == '1':
                 countPositivos += 1
-    lineaFinal = str(countPositivos)+" "+str(len(tests))+" "+str(len(devices))
+    lineaFinal = str(int(countPositivos/int(personas)))+" "+str(len(tests))+" "+str(len(devices))
     salida.write(lineaFinal)
     for i in devices:
-        maccs.write(i)
+        if i != "<incomplete>":
+            maccs.write(i)
     maccs.close()
     salida.close()
 
@@ -267,7 +274,7 @@ def entrenamiento():
     plt.show()
     return tipo
 
-def kneighbours(tipo):
+def kneighbours(tipo,personas):
     archivo = open('salida.txt','r')
     (sniffer,hosts,macs) = archivo.readline().split(" ")
     sniffer = int(sniffer)
@@ -297,12 +304,13 @@ def kneighbours(tipo):
     archivo = open('badMACs.txt','r')
     if ataques < neutrales:
         print(">>>>>>>>>>>>>>>>>>>Su dispositivo no se encuentra en peligro por el momento<<<<<<<<<<<<<<<<<<<")
-        print("> Analisis de sniffer en la red: posibilidad de  "+str(sniffer)+" / 7")
-        print("> Le recomendamos reiniciar su conexion a la red para mejor seguridad")
+        if sniffer > 5:
+            print("> Analisis de sniffer en la red: posibilidad de  "+str(sniffer)+" / "+str(personas)+" : grado medio-alto para sniffers en la red")
+            print("> Le recomendamos reiniciar su conexion a la red para mejor seguridad")
     elif ataques > neutrales:
         print(">>>>>>>>>>>>>>>>>><Su dispositivo esta bajo ataque, reinicie la conexion a su red<<<<<<<<<<<<<")
         if sniffer > 4:
-            print("> Analisis de sniffer en la red: positivo para posible intrusion con grado de "+str(sniffer)+" / 7")
+            print("> Analisis de sniffer en la red: positivo para posible intrusion con grado de "+str(sniffer)+" /"+str(personas))
         if macs > 35:
             print("> Analisis de ataque MITM ARP Poisoning/Spoofing con "+str(macs)+" dispositivos que atacan")
             print("> MACs de dispositivos que lo estan atacando: ")    
@@ -313,9 +321,9 @@ def kneighbours(tipo):
     archivo.close()
     print("Finalizacion de ejecucion, ejecucion completada")
            
-menu()
+gente = menu()
 jun = entrenamiento()
-kneighbours(jun)
+kneighbours(jun,gente)
 
 
 
