@@ -162,9 +162,9 @@ def detectorSniffers(IP):
     os.system( 'grep "tests" nmap.txt > tests.txt')
     archivo = open('tests.txt')
     if len(archivo.readline()) < 1:
-        print ("> Error en la lectura de detector de sniffers, vuelva a ejecutar el programa")
-        print ("> Cerrando programa . . . ")
-        os.system('exit')
+        print(" > Error en la lectura de archivos de resultado nmap, inicie de nuevo el programa")
+        print(" > No hay dispositivos conectados a la red")
+        #os.system('exit')
     else:
         print("> Analizado terminado.")
     archivo.close()
@@ -175,8 +175,8 @@ def detectorSniffers(IP):
         personas += 1
         if asegurado == 'None':
             print(" > Error en la lectura de archivos de resultado nmap, inicie de nuevo el programa")
-            print(" > Cerrando . . .")
-            os.system('exit')
+            print(" > No hay dispositivos conectados a la red")
+            #os.system('exit')
             break
         auxLIne = line.rpartition(':')
         aux2 = auxLIne[len(auxLIne)-1].partition('"')
@@ -202,11 +202,12 @@ def manInTheMiddleDetect():
                 temp = temp2.rpartition('on')
                 temp2 = temp[0]
                 for i in devices:
-                    if i == temp2:
-                        print (">Alerta de posible ARP poisoning/spoofing")
-                        print ("Direccion MAC posible atacante: " + temp2)
-                        MAC.append(temp2)
-                devices.append(temp2)
+                    if i != '<incomplete>':
+                        if i == temp2:
+                            print (">Alerta de posible ARP poisoning/spoofing")
+                            print ("Direccion MAC posible atacante: " + temp2)
+                            MAC.append(temp2)
+                    devices.append(temp2)
         #time.sleep(3)
     print(" > Finalizado escaneo de tablas ARP")
     return MAC
@@ -221,7 +222,10 @@ def ordenamientoAnalisis(tests, devices,personas):
         for j in unos:
             if j == '1':
                 countPositivos += 1
-    lineaFinal = str(int(countPositivos/int(personas)))+" "+str(len(tests))+" "+str(len(devices))
+    if personas != 0:
+        lineaFinal = str(int(countPositivos/int(personas)))+" "+str(len(tests))+" "+str(len(devices))
+    else:
+        lineaFinal = str(int(countPositivos))+" "+str(len(tests))+" "+str(len(devices))
     salida.write(lineaFinal)
     for i in devices:
         if i != "<incomplete>":
